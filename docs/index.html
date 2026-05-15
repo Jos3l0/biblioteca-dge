@@ -170,9 +170,12 @@
   <div class="footer-explore">
     <button class="btn btn-primary" onclick="window.location.href='index.html'">🔍 Explorar todos los recursos</button>
     <p>495 recursos disponibles en la Biblioteca Digital DGE</p>
-    <div style="margin-top:1.5rem;">
+    <div style="margin-top:1.5rem;display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
       <a href="https://www.mendoza.edu.ar" target="_blank" class="btn btn-secondary" style="display:inline-flex;align-items:center;gap:0.5rem;">
         🌐 Visitar sitio principal DGE Mendoza
+      </a>
+      <a href="admin.html" class="btn btn-secondary" style="display:inline-flex;align-items:center;gap:0.5rem;">
+        ⚙️ Admin
       </a>
     </div>
   </div>
@@ -312,8 +315,15 @@
       const app = document.getElementById('app');
       let html = '';
 
-      // Featured book (first post from leamos juntos)
-      const featured = getFirstPostForSection(['pequenos-lectores', 'grandes-lectores']);
+      // Featured book - check localStorage first, fallback to default
+      let featured = null;
+      const savedSlug = localStorage.getItem('featuredSlug');
+      if (savedSlug) {
+        featured = allPosts.find(p => p.slug === savedSlug) || getFirstPostForSection(['pequenos-lectores', 'grandes-lectores']);
+      } else {
+        featured = getFirstPostForSection(['pequenos-lectores', 'grandes-lectores']);
+      }
+      
       if (featured) {
         const img = featured.featured_image_url || 'https://www.mendoza.edu.ar/wp-content/uploads/2026/04/defecto-sin-destacadas.png';
         const lectura = featured.lectura && featured.lectura.length ? featured.lectura[0].name : 'Leamos Juntos';

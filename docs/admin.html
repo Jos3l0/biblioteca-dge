@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin - Biblioteca Digital DGE</title>
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --bg: #0f172a;
+      --surface: #1e293b;
+      --surface2: #334155;
+      --text: #f8fafc;
+      --text-secondary: #94a3b8;
+      --accent: #f59e0b;
+      --success: #22c55e;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+    a { color: inherit; text-decoration: none; }
+
+    .admin-header { background: linear-gradient(135deg, #1e3a5f 0%, #2563eb 50%, #1e40af 100%); padding: 1.5rem 2rem; display: flex; justify-content: space-between; align-items: center; }
+    .admin-header h1 { font-size: 1.5rem; }
+    .admin-header .btn-volver { background: rgba(255,255,255,0.2); padding: 0.5rem 1rem; border-radius: 8px; color: white; }
+
+    .container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+    
+    .login-screen { max-width: 400px; margin: 100px auto; text-align: center; }
+    .login-screen input { width: 100%; padding: 1rem; margin: 1rem 0; border-radius: 8px; border: 1px solid var(--surface2); background: var(--surface); color: white; font-size: 1rem; }
+    .login-screen .btn { width: 100%; padding: 1rem; font-size: 1rem; }
+
+    .admin-panel { display: none; }
+    .admin-panel.active { display: block; }
+
+    .featured-preview { background: var(--surface); border-radius: 12px; padding: 1.5rem; margin-bottom: 2rem; display: flex; gap: 1.5rem; align-items: center; border: 2px solid var(--accent); }
+    .featured-preview img { width: 120px; height: 160px; object-fit: cover; border-radius: 8px; }
+    .featured-preview-info { flex: 1; }
+    .featured-preview-info h3 { font-size: 1.25rem; margin-bottom: 0.5rem; }
+    .featured-preview-actions { margin-top: 1rem; }
+
+    .categories-list { display: flex; flex-direction: column; gap: 1rem; }
+    .category-item { background: var(--surface); border-radius: 12px; overflow: hidden; }
+    .category-header { padding: 1rem 1.5rem; background: var(--surface2); cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-weight: 600; }
+    .category-header:hover { background: #3d4f6a; }
+    .category-header .count { background: var(--primary); padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.875rem; }
+    .category-content { display: none; padding: 1rem; }
+    .category-content.open { display: block; }
+
+    .post-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem; }
+    .post-card { background: var(--bg); border-radius: 8px; padding: 1rem; cursor: pointer; transition: transform 0.2s; border: 2px solid transparent; }
+    .post-card:hover { transform: scale(1.02); }
+    .post-card.selected { border-color: var(--accent); background: rgba(245,158,11,0.1); }
+    .post-card img { width: 100%; height: 120px; object-fit: cover; border-radius: 6px; margin-bottom: 0.5rem; }
+    .post-card-title { font-size: 0.875rem; font-weight: 600; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .post-card-date { font-size: 0.75rem; color: var(--text-secondary); }
+
+    .btn { padding: 0.625rem 1.25rem; border-radius: 8px; font-weight: 600; cursor: pointer; border: none; }
+    .btn-primary { background: var(--primary); color: white; }
+    .btn-primary:hover { background: var(--primary-dark); }
+    .btn-success { background: var(--success); color: white; }
+    .btn-secondary { background: var(--surface2); color: white; }
+
+    .alert { padding: 1rem; border-radius: 8px; margin-bottom: 1rem; display: none; }
+    .alert.success { background: rgba(34,197,94,0.2); color: var(--success); border: 1px solid var(--success); display: block; }
+  </style>
+</head>
+<body>
+  <div class="admin-header">
+    <h1>⚙️ Admin - Biblioteca Digital DGE</h1>
+    <a href="index.html" class="btn-volver">← Volver al sitio</a>
+  </div>
+
+  <div class="container">
+    <div class="login-screen" id="loginScreen">
+      <h2>🔐 Ingresar al Admin</h2>
+      <p style="color: var(--text-secondary); margin-bottom: 1rem;">Ingrese la contraseña para continuar</p>
+      <input type="password" id="passwordInput" placeholder="Contraseña">
+      <button class="btn btn-primary" onclick="checkPassword()">Ingresar</p>
+      <p id="loginError" style="color: #ef4444; margin-top: 1rem; display: none;">Contraseña incorrecta</p>
+    </div>
+
+    <div class="admin-panel" id="adminPanel">
+      <div class="alert success" id="alertSuccess">✓ Cambios guardados correctamente</div>
+
+      <div class="featured-preview" id="featuredPreview">
+        <img src="" alt="" id="previewImg">
+        <div class="featured-preview-info">
+          <h3>📖 Libro destacado actual</h3>
+          <p id="previewTitle">Ningún libro seleccionado</p>
+          <p style="color: var(--text-secondary); font-size: 0.875rem;" id="previewCategory"></p>
+          <div class="featured-preview-actions">
+            <button class="btn btn-primary" onclick="saveFeatured()">💾 Guardar cambios</button>
+            <a href="index.html" target="_blank" class="btn btn-secondary">👁️ Ver en sitio</a>
+          </div>
+        </div>
+      </div>
+
+      <h2 style="margin-bottom: 1rem;">Seleccionar libro destacado</h2>
+      <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Haga clic en una entrada para seleccionarla como libro destacado del mes</p>
+
+      <div class="categories-list" id="categoriesList"></div>
+    </div>
+  </div>
+
+  <script>
+    const CONFIG = { dataPath: './material-json/' };
+    const PASSWORD = '1234';
+
+    const SECTIONS = [
+      { key: 'leamos-juntos', title: '📚 Leamos Juntos', slugs: ['pequenos-lectores', 'grandes-lectores'] },
+      { key: 'fluidez', title: '📖 Fluidez Lectora', slugs: ['recursos-fluidez-lectora'] },
+      { key: 'alfabetizacion', title: '📚 Programa Provincial de Alfabetización', slugs: ['recursos-de-alfabetizacion'] },
+      { key: 'puentes', title: '📚 Puentes de Lectura', slugs: ['puentes-de-lectura'] },
+      { key: 'palabras', title: '📚 Palabras que cuentan la Historia', slugs: ['texto-literarios'] },
+    ];
+
+    let allPosts = [];
+    let lecturaIndex = {};
+    let selectedSlug = null;
+
+    async function loadData() {
+      const indexRes = await fetch(CONFIG.dataPath + 'index.json');
+      const index = await indexRes.json();
+
+      const postFiles = index.files.posts;
+      const postResponses = await Promise.all(postFiles.map(f => fetch(CONFIG.dataPath + f)));
+      const postContents = await Promise.all(postResponses.map(r => r.json()));
+      allPosts = postContents.flat();
+
+      const lecturaRes = await fetch(CONFIG.dataPath + index.files.lectura);
+      lecturaIndex = await lecturaRes.json();
+
+      renderCategories();
+      loadCurrentFeatured();
+    }
+
+    function checkPassword() {
+      const input = document.getElementById('passwordInput').value;
+      if (input === PASSWORD) {
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('adminPanel').classList.add('active');
+        loadData();
+      } else {
+        document.getElementById('loginError').style.display = 'block';
+      }
+    }
+
+    function getPostsForSlugs(slugs) {
+      const postIds = new Set();
+      slugs.forEach(slug => {
+        if (lecturaIndex[slug] && lecturaIndex[slug].ids) {
+          lecturaIndex[slug].ids.forEach(id => postIds.add(id));
+        }
+      });
+      return allPosts.filter(p => postIds.has(p.id));
+    }
+
+    function renderCategories() {
+      const container = document.getElementById('categoriesList');
+      container.innerHTML = '';
+
+      SECTIONS.forEach(section => {
+        const posts = getPostsForSlugs(section.slugs);
+        
+        const categoryHtml = `
+          <div class="category-item">
+            <div class="category-header" onclick="toggleCategory('${section.key}')">
+              <span>${section.title}</span>
+              <span class="count">${posts.length}</span>
+            </div>
+            <div class="category-content" id="cat-${section.key}">
+              <div class="post-list">
+                ${posts.map(post => `
+                  <div class="post-card" onclick="selectPost('${post.slug}', '${escapeHtml(post.title)}', '${post.featured_image_url || ''}', '${section.title}')">
+                    <img src="${post.featured_image_url || 'https://www.mendoza.edu.ar/wp-content/uploads/2026/04/defecto-sin-destacadas.png'}" alt="">
+                    <div class="post-card-title">${escapeHtml(post.title)}</div>
+                    <div class="post-card-date">${new Date(post.date).toLocaleDateString('es-AR')}</div>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          </div>
+        `;
+        container.innerHTML += categoryHtml;
+      });
+    }
+
+    function toggleCategory(key) {
+      const content = document.getElementById('cat-' + key);
+      content.classList.toggle('open');
+    }
+
+    function selectPost(slug, title, img, category) {
+      selectedSlug = slug;
+      document.getElementById('previewImg').src = img || 'https://www.mendoza.edu.ar/wp-content/uploads/2026/04/defecto-sin-destacadas.png';
+      document.getElementById('previewTitle').textContent = title;
+      document.getElementById('previewCategory').textContent = category;
+      
+      document.querySelectorAll('.post-card').forEach(card => card.classList.remove('selected'));
+      event.currentTarget.classList.add('selected');
+    }
+
+    function loadCurrentFeatured() {
+      const savedSlug = localStorage.getItem('featuredSlug');
+      if (savedSlug) {
+        const post = allPosts.find(p => p.slug === savedSlug);
+        if (post) {
+          const section = SECTIONS.find(s => s.slugs.some(slug => {
+            return lecturaIndex[slug] && lecturaIndex[slug].ids && lecturaIndex[slug].ids.includes(post.id);
+          }));
+          document.getElementById('previewImg').src = post.featured_image_url || 'https://www.mendoza.edu.ar/wp-content/uploads/2026/04/defecto-sin-destacadas.png';
+          document.getElementById('previewTitle').textContent = post.title;
+          document.getElementById('previewCategory').textContent = section ? section.title : '';
+        }
+      }
+    }
+
+    function saveFeatured() {
+      if (selectedSlug) {
+        localStorage.setItem('featuredSlug', selectedSlug);
+        document.getElementById('alertSuccess').style.display = 'block';
+        setTimeout(() => {
+          document.getElementById('alertSuccess').style.display = 'none';
+        }, 3000);
+      }
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
+  </script>
+</body>
+</html>
