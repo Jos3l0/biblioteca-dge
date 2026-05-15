@@ -25,10 +25,11 @@
 
 /* Header */
     .header-banner {
-      background: linear-gradient(135deg, #1e3a5f 0%, #2563eb 50%, #1e40af 100%);
-      padding: 3rem 2rem 3rem;
+      background: #ffffff;
+      padding: 1.5rem 2rem 2rem;
       text-align: center;
       box-shadow: var(--shadow-lg);
+      border-bottom: 3px solid #2563eb;
     }
     .header-banner::before {
       content: '';
@@ -38,24 +39,25 @@
       opacity: 0.3;
     }
     .header-content { position: relative; z-index: 100; }
-    .header-banner h1 { font-size: 3rem; font-weight: 800; margin-bottom: 0.5rem; letter-spacing: -0.02em; }
-    .header-banner p { font-size: 1.125rem; color: rgba(255,255,255,0.85); max-width: 600px; margin: 0 auto; }
+    .header-banner h1 { font-size: 2.5rem; font-weight: 800; margin-bottom: 0.5rem; letter-spacing: -0.02em; color: #1e293b; }
+    .header-banner p { font-size: 1rem; color: #64748b; max-width: 600px; margin: 0 auto 1rem; }
+    .header-logo { position: absolute; left: 2rem; top: 50%; transform: translateY(-50%); height: 50px; }
     .header-badge { display: inline-block; background: var(--accent); color: #0f172a; padding: 0.25rem 1rem; border-radius: 20px; font-size: 0.875rem; font-weight: 700; margin-bottom: 1rem; }
 
     /* Search */
-    .search-container { margin-top: 1.5rem; position: relative; z-index: 1001; }
-    .search-input { width: 100%; max-width: 500px; padding: 0.875rem 1rem 0.875rem 2.5rem; border-radius: 30px; border: none; font-size: 1rem; background: rgba(255,255,255,0.2); color: white; outline: none; }
-    .search-input::placeholder { color: rgba(255,255,255,0.7); }
-    .search-input:focus { background: rgba(255,255,255,0.3); }
-    .search-icon { position: absolute; left: 0.875rem; top: 50%; transform: translateY(-50%); width: 20px; height: 20px; pointer-events: none; }
-    .search-results { position: absolute; top: 100%; left: 0; right: 0; background: white; border-radius: var(--radius); margin-top: 0.5rem; max-height: 400px; overflow-y: auto; box-shadow: var(--shadow-lg); z-index: 1000; }
-    .search-result-item { padding: 0.75rem 1rem; cursor: pointer; border-bottom: 1px solid var(--surface2); display: flex; gap: 0.75rem; align-items: center; color: var(--text); }
-    .search-result-item:hover { background: var(--surface); }
+    .search-container { margin-top: 1rem; position: relative; z-index: 1001; display: inline-block; }
+    .search-input { width: 100%; max-width: 500px; padding: 0.75rem 1rem 0.75rem 2.5rem; border-radius: 30px; border: 1px solid #e2e8f0; font-size: 0.9375rem; background: #f8fafc; color: #1e293b; outline: none; box-shadow: var(--shadow); }
+    .search-input::placeholder { color: #94a3b8; }
+    .search-input:focus { border-color: #2563eb; background: #fff; }
+    .search-icon { position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); width: 18px; height: 18px; pointer-events: none; color: #64748b; }
+    .search-results { position: absolute; top: 100%; left: 0; right: 0; background: white; border-radius: var(--radius); margin-top: 0.5rem; max-height: 400px; overflow-y: auto; box-shadow: var(--shadow-lg); z-index: 1000; border: 1px solid #e2e8f0; }
+    .search-result-item { padding: 0.75rem 1rem; cursor: pointer; border-bottom: 1px solid #e2e8f0; display: flex; gap: 0.75rem; align-items: center; color: #1e293b; }
+    .search-result-item:hover { background: #f1f5f9; }
     .search-result-item img { width: 40px; height: 55px; object-fit: cover; border-radius: 4px; }
     .search-result-info { flex: 1; }
     .search-result-title { font-weight: 600; font-size: 0.9375rem; }
-    .search-result-type { font-size: 0.75rem; color: var(--text-secondary); }
-    .no-results { padding: 1rem; text-align: center; color: var(--text-secondary); }
+    .search-result-type { font-size: 0.75rem; color: #64748b; }
+    .no-results { padding: 1rem; text-align: center; color: #64748b; }
 
     /* Main container */
     .container { max-width: 1400px; margin: 0 auto; padding: 0 2rem; }
@@ -109,8 +111,14 @@
       scroll-behavior: smooth;
       padding-bottom: 1rem;
       scrollbar-width: thin;
-      scrollbar-color: var(--surface2) transparent;
+      scrollbar-color: #cbd5e1 transparent;
+      cursor: grab;
+      user-select: none;
     }
+    .carousel-track:active { cursor: grabbing; }
+    .carousel-track::-webkit-scrollbar { height: 6px; }
+    .carousel-track::-webkit-scrollbar-track { background: transparent; }
+    .carousel-track::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
     .carousel-track::-webkit-scrollbar { height: 6px; }
     .carousel-track::-webkit-scrollbar-track { background: transparent; }
     .carousel-track::-webkit-scrollbar-thumb { background: var(--surface2); border-radius: 3px; }
@@ -155,11 +163,12 @@
 <body>
 
   <div class="header-banner">
+    <img src="https://www.mendoza.edu.ar/wp-content/uploads/2023/04/DGE-2023.png" alt="DGE Mendoza" class="header-logo" onerror="this.style.display='none'">
     <div class="header-content">
       <h1>Biblioteca Digital</h1>
       <p>Libros y recursos para explorar nuevas historias, fortalecer la alfabetización y la cultura en cada etapa de la vida.</p>
       <div class="search-container">
-        <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
         <input type="text" class="search-input" id="searchInput" placeholder="Buscar libros, recursos, temas..." oninput="handleSearch(this.value)">
         <div class="search-results hidden" id="searchResults"></div>
       </div>
@@ -351,7 +360,7 @@
         html += `<section class="section">
           <div class="section-header">
             <h2 class="section-title">${section.title}</h2>
-            <a href="#" class="section-link" onclick="renderCategory('${section.key}')">Ver todos (${total}) →</a>
+            <a href="javascript:void(0)" class="section-link" onclick="renderCategory('${section.key}')">Ver todos (${total}) →</a>
           </div>
           <p class="section-desc">${section.desc}</p>
           <div class="carousel">
@@ -413,6 +422,38 @@
       if (!e.target.closest('.search-container')) {
         document.getElementById('searchResults').classList.add('hidden');
       }
+    });
+
+    // Drag to scroll for carousels
+    document.querySelectorAll('.carousel-track').forEach(track => {
+      let isDown = false;
+      let startX;
+      let scrollLeft;
+
+      track.addEventListener('mousedown', (e) => {
+        isDown = true;
+        track.style.cursor = 'grabbing';
+        startX = e.pageX - track.offsetLeft;
+        scrollLeft = track.scrollLeft;
+      });
+
+      track.addEventListener('mouseleave', () => {
+        isDown = false;
+        track.style.cursor = 'grab';
+      });
+
+      track.addEventListener('mouseup', () => {
+        isDown = false;
+        track.style.cursor = 'grab';
+      });
+
+      track.addEventListener('mousemove', (e) => {
+        if (!isDown) return;
+        e.preventDefault();
+        const x = e.pageX - track.offsetLeft;
+        const walk = (x - startX) * 2;
+        track.scrollLeft = scrollLeft - walk;
+      });
     });
   </script>
 </body>
