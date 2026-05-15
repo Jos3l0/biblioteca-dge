@@ -38,10 +38,10 @@
       background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
       opacity: 0.3;
     }
-    .header-content { position: relative; z-index: 100; }
-    .header-banner h1 { font-size: 2.5rem; font-weight: 800; margin-bottom: 0.5rem; letter-spacing: -0.02em; color: #1e293b; }
-    .header-banner p { font-size: 1rem; color: #64748b; max-width: 600px; margin: 0 auto 1rem; }
-    .header-logo { position: absolute; left: 2rem; top: 50%; transform: translateY(-50%); height: 60px; width: auto; z-index: 10; }
+    .header-content { position: relative; z-index: 100; display: flex; align-items: center; justify-content: center; gap: 1rem; flex-wrap: wrap; }
+    .header-banner h1 { font-size: 2.5rem; font-weight: 800; letter-spacing: -0.02em; color: #1e293b; display: flex; align-items: center; gap: 0.75rem; }
+    .header-banner p { font-size: 1rem; color: #64748b; max-width: 600px; margin: 0 auto 1rem; width: 100%; }
+    .header-logo { height: 55px; width: auto; flex-shrink: 0; }
     .header-badge { display: inline-block; background: var(--accent); color: #0f172a; padding: 0.25rem 1rem; border-radius: 20px; font-size: 0.875rem; font-weight: 700; margin-bottom: 1rem; }
 
     /* Search */
@@ -165,7 +165,7 @@
   <div class="header-banner">
     <img src="https://www.mendoza.edu.ar/wp-content/uploads/2022/02/logodge2024enc.png" alt="DGE Mendoza" class="header-logo" onerror="this.style.display='none'">
     <div class="header-content">
-      <h1>Biblioteca Digital</h1>
+      <h1><span class="title-text">Biblioteca Digital</span></h1>
       <p>Libros y recursos para explorar nuevas historias, fortalecer la alfabetización y la cultura en cada etapa de la vida.</p>
       <div class="search-container">
         <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
@@ -248,7 +248,7 @@
       const app = document.getElementById('app');
       
       let html = `<div style="max-width:1200px;margin:0 auto;padding:2rem;">
-        <button class="btn btn-secondary" onclick="render()" style="margin-bottom:1.5rem;">← Volver</button>
+        <button class="btn btn-secondary btn-volver" style="margin-bottom:1.5rem;">← Volver</button>
         <h1 style="font-size:2rem;margin-bottom:0.5rem;">${section.title}</h1>
         <p style="color:#94a3b8;margin-bottom:1.5rem;">${section.desc}</p>
         <p style="margin-bottom:2rem;color:#94a3b8;">${posts.length} recursos disponibles</p>
@@ -256,7 +256,7 @@
       
       posts.forEach(post => {
         const img = post.featured_image_url || 'https://www.mendoza.edu.ar/wp-content/uploads/2026/04/defecto-sin-destacadas.png';
-        html += `<div class="carousel-card" onclick="renderDetailBySlug('${post.slug}')">
+        html += `<div class="carousel-card" data-slug="${post.slug}">
           <img class="carousel-cover" src="${img}" alt="${escapeHtml(post.title)}" loading="lazy">
           <div class="carousel-title">${escapeHtml(post.title)}</div>
           <div class="carousel-meta">📅 ${new Date(post.date).toLocaleDateString('es-AR', {day:'2-digit',month:'2-digit',year:'numeric'})}</div>
@@ -344,7 +344,7 @@
               <p class="featured-excerpt">${escapeHtml(excerpt)}</p>
               <p class="featured-note">Selección del equipo DGE por su valor pedagógico y su contribución a la alfabetización.</p>
               <div class="featured-actions">
-                <button class="btn btn-primary" onclick="renderDetailBySlug('${featured.slug}')">Leer online</button>
+                <button class="btn btn-primary btn-leer" data-slug="${featured.slug}">Leer online</button>
                 ${featured.featured_image_url ? '<a href="' + featured.featured_image_url + '" target="_blank" class="btn btn-secondary">Descargar</a>' : ''}
               </div>
             </div>
@@ -360,7 +360,7 @@
         html += `<section class="section">
           <div class="section-header">
             <h2 class="section-title">${section.title}</h2>
-            <a href="javascript:void(0)" class="section-link" onclick="renderCategory('${section.key}')">Ver todos (${total}) →</a>
+            <a href="#" class="section-link" data-category="${section.key}">Ver todos (${total}) →</a>
           </div>
           <p class="section-desc">${section.desc}</p>
           <div class="carousel">
@@ -368,7 +368,7 @@
 
         posts.forEach(post => {
           const img = post.featured_image_url || 'https://www.mendoza.edu.ar/wp-content/uploads/2026/04/defecto-sin-destacadas.png';
-          html += `<div class="carousel-card" onclick="renderDetailBySlug('${post.slug}')">
+          html += `<div class="carousel-card" data-slug="${post.slug}">
             <img class="carousel-cover" src="${img}" alt="${escapeHtml(post.title)}" loading="lazy">
             <div class="carousel-title">${escapeHtml(post.title)}</div>
             <div class="carousel-meta">📅 ${new Date(post.date).toLocaleDateString('es-AR', {day:'2-digit',month:'2-digit',year:'numeric'})}</div>
@@ -402,7 +402,7 @@
       const lectura = post.lectura && post.lectura.length ? post.lectura.map(t => t.name).join(', ') : '';
 
       app.innerHTML = `<div style="max-width:900px;margin:0 auto;padding:2rem;">
-        <button class="btn btn-secondary" onclick="render()" style="margin-bottom:1.5rem;">← Volver</button>
+        <button class="btn btn-secondary btn-volver" style="margin-bottom:1.5rem;">← Volver</button>
         <h1 style="font-size:2rem;margin-bottom:0.5rem;">${escapeHtml(post.title)}</h1>
         <p style="color:#94a3b8;margin-bottom:1rem;">${lectura} • ${new Date(post.date).toLocaleDateString('es-AR', {day:'2-digit',month:'2-digit',year:'numeric'})}</p>
         <img src="${img}" alt="${escapeHtml(post.title)}" style="width:100%;max-height:400px;object-fit:contain;margin-bottom:1.5rem;border-radius:12px;">
@@ -419,8 +419,42 @@
     window.addEventListener('popstate', handleRoute);
     window.addEventListener('load', () => { loadData(); handleRoute(); });
     document.addEventListener('click', (e) => {
+      // Close search results when clicking outside
       if (!e.target.closest('.search-container')) {
         document.getElementById('searchResults').classList.add('hidden');
+      }
+      
+      // Handle Volver buttons
+      if (e.target.matches('.btn-volver') || e.target.closest('.btn-volver')) {
+        e.preventDefault();
+        render();
+      }
+      
+      // Handle carousel cards
+      if (e.target.closest('.carousel-card')) {
+        const card = e.target.closest('.carousel-card');
+        const slug = card.getAttribute('data-slug');
+        if (slug) {
+          renderDetailBySlug(slug);
+        }
+      }
+      
+      // Handle section links (Ver todos)
+      if (e.target.matches('.section-link') || e.target.closest('.section-link')) {
+        const link = e.target.matches('.section-link') ? e.target : e.target.closest('.section-link');
+        const key = link.getAttribute('data-category');
+        if (key) {
+          renderCategory(key);
+        }
+      }
+      
+      // Handle Leer online button
+      if (e.target.matches('.btn-leer') || e.target.closest('.btn-leer')) {
+        const btn = e.target.matches('.btn-leer') ? e.target : e.target.closest('.btn-leer');
+        const slug = btn.getAttribute('data-slug');
+        if (slug) {
+          renderDetailBySlug(slug);
+        }
       }
     });
 
