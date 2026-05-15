@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Recursos Educativos - DGE Mendoza</title>
+  <style>
+    :root { --primary: #2563eb; --primary-light: #3b82f6; --primary-dark: #1d4ed8; --bg: #f8fafc; --surface: #ffffff; --text: #1e293b; --text-secondary: #64748b; --border: #e2e8f0; --radius: 12px; --radius-sm: 8px; --radius-xs: 4px; --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); --transition: all 0.2s ease; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+    a { color: var(--primary); text-decoration: none; }
+    .header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 1rem 2rem; position: sticky; top: 0; z-index: 100; }
+    .header-content { max-width: 1400px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+    .logo { font-size: 1.5rem; font-weight: 700; color: var(--text); display: flex; align-items: center; gap: 0.5rem; }
+    .logo-icon { width: 40px; height: 40px; background: var(--primary); border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; }
+    .search-container { flex: 1; max-width: 600px; min-width: 280px; }
+    .search-box { display: flex; gap: 0.5rem; }
+    .search-input { flex: 1; padding: 0.75rem 1rem; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 1rem; outline: none; transition: var(--transition); }
+    .search-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgb(37 99 235 / 0.1); }
+    .search-btn { padding: 0.75rem 1.5rem; background: var(--primary); color: white; border: none; border-radius: var(--radius-sm); font-weight: 600; cursor: pointer; }
+    .search-btn:hover { background: var(--primary-dark); }
+    .main { max-width: 1400px; margin: 0 auto; padding: 1.5rem 2rem; display: grid; grid-template-columns: 280px 1fr; gap: 1.5rem; }
+    @media (max-width: 900px) { .main { grid-template-columns: 1fr; } }
+    .filters { background: var(--surface); border-radius: var(--radius); padding: 1.5rem; box-shadow: var(--shadow); height: fit-content; position: sticky; top: 80px; max-height: calc(100vh - 100px); overflow-y: auto; }
+    .filter-title { font-size: 1.125rem; font-weight: 700; margin-bottom: 1rem; }
+    .filter-group { margin-bottom: 1.5rem; }
+    .filter-group-title { font-size: 0.875rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; }
+    .filter-options { display: flex; flex-direction: column; gap: 0.375rem; }
+    .filter-option { display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 0.75rem; border-radius: var(--radius-xs); cursor: pointer; transition: var(--transition); font-size: 0.9375rem; }
+    .filter-option:hover { background: var(--bg); }
+    .filter-option.active { background: var(--primary); color: white; }
+    .filter-checkbox { width: 18px; height: 18px; border: 2px solid var(--border); border-radius: var(--radius-xs); display: flex; align-items: center; justify-content: center; font-size: 0.75rem; }
+    .filter-option.active .filter-checkbox { background: white; border-color: white; color: var(--primary); }
+    .filter-count { font-size: 0.75rem; color: var(--text-secondary); margin-left: auto; }
+    .filter-option.active .filter-count { color: rgba(255,255,255,0.8); }
+    .clear-filters { width: 100%; padding: 0.5rem; background: none; border: 1px solid var(--border); border-radius: var(--radius-sm); color: var(--text-secondary); cursor: pointer; }
+    .clear-filters:hover { border-color: var(--primary); color: var(--primary); }
+    .results { min-height: 400px; }
+    .results-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; flex-wrap: wrap; gap: 1rem; }
+    .results-count { font-size: 1rem; color: var(--text-secondary); }
+    .results-sort { display: flex; align-items: center; gap: 0.5rem; }
+    .results-sort select { padding: 0.5rem 0.75rem; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); }
+    .results-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; }
+    @media (max-width: 600px) { .results-grid { grid-template-columns: 1fr; } }
+    .card { background: var(--surface); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; cursor: pointer; transition: var(--transition); animation: fadeIn 0.3s ease-out both; }
+    .card:hover { transform: translateY(-4px); box-shadow: 0 12px 24px -8px rgb(0 0 0 / 0.15); }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    .card-image { width: 100%; height: 200px; object-fit: cover; background: var(--bg); }
+    .card-content { padding: 1.25rem; }
+    .card-meta { display: flex; align-items: center; gap: 1rem; font-size: 0.8125rem; color: var(--text-secondary); margin-bottom: 0.5rem; flex-wrap: wrap; }
+    .card-category { font-weight: 500; color: var(--primary); }
+    .card-title { font-size: 1.125rem; font-weight: 700; line-height: 1.4; margin-bottom: 0.5rem; }
+    .card-excerpt { font-size: 0.875rem; color: var(--text-secondary); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+    .card-tags { display: flex; gap: 0.375rem; margin-top: 0.75rem; flex-wrap: wrap; }
+    .card-tag { padding: 0.25rem 0.5rem; background: var(--bg); border-radius: var(--radius-xs); font-size: 0.75rem; color: var(--text-secondary); }
+    .empty { text-align: center; padding: 4rem 2rem; }
+    .empty-icon { font-size: 4rem; margin-bottom: 1rem; }
+    .empty-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem; }
+    .empty-text { color: var(--text-secondary); }
+    .loading { display: flex; align-items: center; justify-content: center; min-height: 300px; }
+    .spinner { width: 40px; height: 40px; border: 3px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .pagination { display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin-top: 2rem; flex-wrap: wrap; }
+    .pagination-btn { padding: 0.5rem 1rem; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); cursor: pointer; font-size: 0.875rem; }
+    .pagination-btn:hover:not([disabled]) { border-color: var(--primary); color: var(--primary); }
+    .pagination-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
+    .pagination-btn[disabled] { opacity: 0.5; cursor: not-allowed; }
+    .detail-page { min-height: 100vh; background: var(--bg); animation: fadeIn 0.3s ease-out; }
+    .detail-header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 1rem 2rem; position: sticky; top: 0; z-index: 100; display: flex; align-items: center; gap: 0.75rem; }
+    .back-btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-sm); cursor: pointer; text-decoration: none; color: inherit; }
+    .back-btn:hover { border-color: var(--primary); color: var(--primary); }
+    .detail-container { max-width: 900px; margin: 0 auto; padding: 2rem; }
+    .detail-breadcrumb { display: flex; align-items: center; gap: 0.5rem; font-size: 0.875rem; color: var(--text-secondary); margin-bottom: 1.5rem; }
+    .detail-breadcrumb a { color: var(--primary); }
+    .detail-breadcrumb a:hover { text-decoration: underline; }
+    .detail-breadcrumb span { opacity: 0.5; }
+    .detail-title-wrap { display: flex; align-items: flex-start; gap: 1rem; margin-bottom: 0.5rem; }
+    .detail-title { font-size: 2rem; font-weight: 700; line-height: 1.3; flex: 1; }
+    .detail-permalink { font-size: 1.5rem; text-decoration: none; opacity: 0.4; flex-shrink: 0; padding-top: 0.5rem; }
+    .detail-permalink:hover { opacity: 1; }
+    .detail-meta { display: flex; align-items: center; gap: 1rem; color: var(--text-secondary); margin-bottom: 1.5rem; flex-wrap: wrap; font-size: 0.9375rem; }
+    .detail-meta-sep { opacity: 0.4; }
+    .detail-original-link { color: var(--primary); font-weight: 500; }
+    .detail-original-link:hover { text-decoration: underline; }
+    .detail-image { width: 100%; max-height: 500px; object-fit: contain; background: var(--surface); border-radius: var(--radius); margin-bottom: 1.5rem; }
+    .detail-content { font-size: 1.0625rem; line-height: 2; }
+    .detail-content p { margin-bottom: 1.25rem; }
+    .detail-content h3 { font-size: 1.375rem; font-weight: 700; margin: 2rem 0 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--primary-light); }
+    .detail-content h4 { font-size: 1.125rem; font-weight: 700; margin: 1.5rem 0 0.75rem; color: var(--text); }
+    .detail-content a { color: var(--primary); font-weight: 500; }
+    .detail-content img { max-width: 100%; height: auto; border-radius: var(--radius-sm); margin: 1rem 0; }
+    .detail-content strong { font-weight: 700; }
+    .detail-content ul, .detail-content ol { margin: 1rem 0 1.25rem 1.5rem; }
+    .detail-content li { margin-bottom: 0.5rem; }
+    .detail-content hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+    .detail-content table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; }
+    .detail-content td, .detail-content th { padding: 0.5rem 0.75rem; border: 1px solid var(--border); }
+    .detail-content blockquote { border-left: 4px solid var(--primary); padding: 0.5rem 1rem; margin: 1.5rem 0; background: var(--surface); border-radius: 0 var(--radius-xs) var(--radius-xs) 0; }
+    .detail-footer { display: flex; align-items: center; gap: 0.75rem; margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--border); flex-wrap: wrap; }
+    .detail-tag { padding: 0.375rem 0.75rem; background: var(--surface); border-radius: var(--radius-xs); font-size: 0.8125rem; color: var(--text-secondary); border: 1px solid var(--border); }
+    .detail-full-link { margin-left: auto; padding: 0.625rem 1.25rem; background: var(--primary); color: white !important; border-radius: var(--radius-sm); font-weight: 600; font-size: 0.9375rem; }
+    .detail-full-link:hover { background: var(--primary-dark); }
+    .pdf-section { margin-top: 1.5rem; }
+    .pdf-section iframe { width: 100%; height: 600px; border: none; border-radius: var(--radius-sm); background: #f1f5f9; }
+    .pdf-section .pdf-link { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.25rem; background: linear-gradient(135deg, #dc2626, #b91c1c); color: white !important; border-radius: 8px; font-weight: 600; }
+    .pdf-section hr { margin: 2rem 0; border: none; border-top: 1px solid var(--border); }
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="header-content">
+      <div class="logo"><div class="logo-icon">📚</div><span>Recursos Educativos DGE</span></div>
+      <div class="search-container">
+        <form class="search-box" onsubmit="handleSearch(event)">
+          <input type="text" class="search-input" id="searchInput" placeholder="Buscar recursos educativos...">
+          <button type="submit" class="search-btn">Buscar</button>
+        </form>
+      </div>
+      <div id="resultsCountHeader">Cargando...</div>
+    </div>
+  </header>
+  <main class="main">
+    <aside class="filters" id="filters">
+      <div class="filter-title">Filtros</div>
+      <div class="filter-group">
+        <div class="filter-group-title">Lectura</div>
+        <div class="filter-options" id="lecturaFilter"></div>
+      </div>
+      <button class="clear-filters" onclick="clearFilters()">Limpiar filtros</button>
+    </aside>
+    <section class="results">
+      <div class="results-header">
+        <div class="results-count" id="resultsCountText"></div>
+        <div class="results-sort">
+          <select id="sortSelect" onchange="handleSort(this.value)">
+            <option value="date-desc">Más recientes</option>
+            <option value="date-asc">Más antiguos</option>
+            <option value="title-asc">A-Z</option>
+            <option value="title-desc">Z-A</option>
+          </select>
+        </div>
+      </div>
+      <div class="results-grid" id="resultsGrid"></div>
+      <div class="loading" id="loading"><div class="spinner"></div></div>
+      <div class="empty hidden" id="empty"><div class="empty-icon">🔍</div><h2 class="empty-title">Sin resultados</h2><p class="empty-text">No se encontraron recursos con los filtros seleccionados.</p></div>
+      <div class="pagination" id="pagination"></div>
+    </section>
+  </main>
+  <div id="detailPage"></div>
+  <script src="https://cdn.jsdelivr.net/npm/fuse.js@7.0.0/dist/fuse.min.js"></script>
+  <script>
+    const CONFIG = {
+      dataPath: '/material-json/',
+      resultsPerPage: 24,
+      fuseKeys: [
+        { name: 'title', weight: 0.4 },
+        { name: 'search_blob', weight: 0.3 },
+        { name: 'content_text', weight: 0.2 }
+      ]
+    };
+
+    const state = {
+      allPosts: [],
+      filteredPosts: [],
+      page: 1,
+      sortBy: 'date-desc',
+      searchQuery: '',
+      fuse: null,
+      lecturaData: {},
+      filters: {
+        lectura: []
+      }
+    };
+
+    const activeFilters = { lectura: [] };
+
+    // ---- Helpers ----
+    function getLecturaName(post) {
+      return post.lectura && post.lectura.length
+        ? post.lectura.map(a => a.name).join(', ')
+        : '';
+    }
+    function getLecturaSlugs(post) {
+      return post.lectura ? post.lectura.map(a => a.slug) : [];
+    }
+    function $(id) { return document.getElementById(id); }
+    function truncate(str, len) {
+      return str && str.length > len ? str.slice(0, len) + '...' : str || '';
+    }
+    function formatDate(dateStr) {
+      const d = new Date(dateStr);
+      return d.toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    }
+    function escapeHtml(str) {
+      if (!str) return '';
+      return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+    function debounce(fn, ms) {
+      let timeout;
+      return function(...args) {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => fn.apply(this, args), ms);
+      };
+    }
+
+    // ---- Carga de datos ----
+    async function loadData() {
+      try {
+        console.log('Cargando índice...');
+        const indexRes = await fetch(CONFIG.dataPath + 'index.json');
+        const index = await indexRes.json();
+        console.log('Dataset:', index.counts.posts, 'posts');
+
+        // Cargar todos los archivos de posts en paralelo
+        const postFiles = index.files.posts;
+        const postResponses = await Promise.all(postFiles.map(f => fetch(CONFIG.dataPath + f)));
+        const postContents = await Promise.all(postResponses.map(r => r.json()));
+        state.allPosts = postContents.flat();
+        console.log('Cargados', state.allPosts.length, 'posts');
+
+        // Cargar JSON de taxonomías de lectura
+        const lecturaRes = await fetch(CONFIG.dataPath + index.files.lectura);
+        state.lecturaData = await lecturaRes.json();
+
+        initFilters();
+        initFuse();
+        renderFilters();
+        applyFilters();
+
+        $('loading').classList.add('hidden');
+        handleRoute();
+        return true;
+      } catch (err) {
+        console.error('Error:', err);
+        $('loading').innerHTML = '<div class="empty"><div class="empty-icon">⚠️</div><h2 class="empty-title">Error</h2><p class="empty-text">' + err.message + '</p></div>';
+        return false;
+      }
+    }
+
+    // ---- Fuse.js - Búsqueda difusa ----
+    function initFuse() {
+      state.fuse = new Fuse(state.allPosts, {
+        keys: CONFIG.fuseKeys,
+        threshold: 0.4,
+        ignoreLocation: true,
+        includeMatches: true,
+        includeScore: true,
+        minMatchCharLength: 3,
+        findAllMatches: false
+      });
+    }
+
+    // ---- Filtros ----
+    function initFilters() {
+      state.filters.lectura = Object.entries(state.lecturaData).map(([key, val]) => ({
+        id: key,
+        name: val.name.replace(/^- /, ''),
+        count: val.total_posts
+      }));
+    }
+
+    function renderFilters() {
+      const isActive = (type, id) => activeFilters[type].includes(id);
+
+      $('lecturaFilter').innerHTML = state.filters.lectura.map(f =>
+        '<div class="filter-option ' + (isActive('lectura', f.id) ? 'active' : '') + '" data-type="lectura" data-id="' + f.id + '">' +
+        '<span class="filter-checkbox">' + (isActive('lectura', f.id) ? '✓' : '') + '</span>' +
+        '<span>' + f.name + '</span><span class="filter-count">(' + f.count + ')</span></div>'
+      ).join('');
+
+      document.querySelectorAll('.filter-option').forEach(el =>
+        el.addEventListener('click', () => toggleFilter(el.dataset.type, el.dataset.id))
+      );
+    }
+
+    function toggleFilter(type, id) {
+      const arr = activeFilters[type];
+      const idx = arr.indexOf(id);
+      if (idx > -1) arr.splice(idx, 1); else arr.push(id);
+      renderFilters();
+      applyFilters();
+    }
+
+    function clearFilters() {
+      activeFilters.lectura = [];
+      $('searchInput').value = '';
+      state.searchQuery = '';
+      renderFilters();
+      applyFilters();
+    }
+
+    // ---- Aplicar filtros y búsqueda ----
+    function applyFilters() {
+      // 1. Búsqueda difusa con Fuse.js
+      let results = state.searchQuery
+        ? state.fuse.search(state.searchQuery).map(r => r.item)
+        : [...state.allPosts];
+
+      // 2. Normalizar para búsqueda sin acentos
+      const removeAccents = str => str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+
+      // 3. Priorización de resultados
+      if (state.searchQuery) {
+        const queryLower = state.searchQuery.toLowerCase();
+        const queryNorm = removeAccents(queryLower);
+        const queryWords = queryNorm.split(/\s+/).filter(Boolean);
+
+        if (queryWords.length > 0) {
+          results = results.map(post => {
+            const titleNorm = removeAccents((post.title || '').toLowerCase());
+            const contentNorm = removeAccents(((post.content_text || '') + ' ' + (post.search_blob || '')).toLowerCase());
+
+            let priority = 0;
+            // Frase completa en título
+            if (titleNorm.includes(queryNorm)) priority += 100;
+            // Frase completa en contenido
+            if (contentNorm.includes(queryNorm)) priority += 50;
+            // Palabras individuales
+            queryWords.forEach(word => {
+              if (word.length > 2) {
+                if (titleNorm.includes(word)) priority += 10;
+                if (contentNorm.includes(word)) priority += 1;
+              }
+            });
+
+            return { ...post, _priority: priority };
+          });
+
+          // Filtrar: todas las palabras deben estar
+          results = results.filter(post => {
+            const titleNorm = removeAccents((post.title || '').toLowerCase());
+            const contentNorm = removeAccents(((post.content_text || '') + ' ' + (post.search_blob || '')).toLowerCase());
+            const allNorm = titleNorm + ' ' + contentNorm;
+            return queryWords.every(word => allNorm.includes(word));
+          });
+        }
+      }
+
+      // 4. Filtros por taxonomía de lectura
+      if (activeFilters.lectura.length > 0) {
+        const ids = [];
+        activeFilters.lectura.forEach(slug => {
+          if (state.lecturaData[slug] && state.lecturaData[slug].ids) {
+            ids.push(...state.lecturaData[slug].ids);
+          }
+        });
+        const filterSet = new Set(ids);
+        results = results.filter(p => filterSet.has(p.id));
+      }
+
+      // 5. Ordenar resultados
+      results = sortPosts(results);
+      state.filteredPosts = results;
+      state.page = 1;
+      renderResults();
+    }
+
+    function sortPosts(posts) {
+      const sorted = [...posts];
+      const hasPriority = sorted.some(p => p._priority > 0);
+
+      if (hasPriority) {
+        sorted.sort((a, b) => {
+          const pa = a._priority || 0;
+          const pb = b._priority || 0;
+          if (pa !== pb) return pb - pa;
+          return new Date(b.date) - new Date(a.date);
+        });
+        return sorted;
+      }
+
+      switch (state.sortBy) {
+        case 'date-desc': return sorted.sort((a, b) => new Date(b.date) - new Date(a.date));
+        case 'date-asc': return sorted.sort((a, b) => new Date(a.date) - new Date(b.date));
+        case 'title-asc': return sorted.sort((a, b) => a.title.localeCompare(b.title, 'es'));
+        case 'title-desc': return sorted.sort((a, b) => b.title.localeCompare(a.title, 'es'));
+        default: return sorted;
+      }
+    }
+
+    // ---- Render ----
+    function renderResults() {
+      // Limpiar _priority temporal
+      state.filteredPosts = state.filteredPosts.map(({ _priority, ...post }) => post);
+
+      const grid = $('resultsGrid');
+      const total = state.filteredPosts.length;
+      const totalPages = Math.ceil(total / CONFIG.resultsPerPage);
+
+      $('resultsCountText').textContent = total + ' recurso' + (total !== 1 ? 's' : '') + ' encontrado' + (total !== 1 ? 's' : '');
+      $('resultsCountHeader').textContent = total + ' recursos';
+
+      if (total === 0) {
+        grid.innerHTML = '';
+        $('empty').classList.remove('hidden');
+        $('pagination').innerHTML = '';
+        return;
+      }
+      $('empty').classList.add('hidden');
+
+      const start = (state.page - 1) * CONFIG.resultsPerPage;
+      const end = start + CONFIG.resultsPerPage;
+      const pagePosts = state.filteredPosts.slice(start, end);
+
+      grid.innerHTML = pagePosts.map((post, i) => {
+        const img = post.featured_image_url || 'https://www.mendoza.edu.ar/wp-content/uploads/2026/04/defecto-sin-destacadas.png';
+        const lectura = getLecturaName(post);
+        return '<article class="card" data-id="' + post.id + '" style="animation-delay: ' + (i * 0.02) + 's" onclick="showDetail(\'' + post.slug + '\')">' +
+          '<img class="card-image" src="' + img + '" alt="' + escapeHtml(post.title) + '" loading="lazy">' +
+          '<div class="card-content">' +
+          '<div class="card-meta"><span>📅 ' + formatDate(post.date) + '</span>' + (lectura ? '<span class="card-category">' + lectura + '</span>' : '') + '</div>' +
+          '<h3 class="card-title">' + escapeHtml(post.title) + '</h3>' +
+          '<p class="card-excerpt">' + escapeHtml(truncate(post.content_text, 120)) + '</p>' +
+          '</div></article>';
+      }).join('');
+
+      renderPagination(totalPages);
+    }
+
+    function renderPagination(totalPages) {
+      const pag = $('pagination');
+      if (totalPages <= 1) { pag.innerHTML = ''; return; }
+      let html = '<button class="pagination-btn" onclick="goToPage(' + (state.page - 1) + ')" ' + (state.page === 1 ? 'disabled' : '') + '>← Anterior</button>';
+      for (let i = Math.max(1, state.page - 2); i <= Math.min(totalPages, state.page + 2); i++) {
+        html += '<button class="pagination-btn ' + (i === state.page ? 'active' : '') + '" onclick="goToPage(' + i + ')">' + i + '</button>';
+      }
+      html += '<button class="pagination-btn" onclick="goToPage(' + (state.page + 1) + ')" ' + (state.page === totalPages ? 'disabled' : '') + '>Siguiente →</button>';
+      pag.innerHTML = html;
+    }
+
+    // ---- Vista detalle ----
+    function showDetail(slug) { history.pushState(null, '', '/' + slug + '/'); renderDetailPageBySlug(slug); }
+
+    function handleRoute() {
+      const path = window.location.pathname;
+      const slug = path.replace(/^\//, '').replace(/\/$/, '');
+      if (slug && slug !== 'material-json' && slug !== 'index.html') {
+        renderDetailPageBySlug(slug);
+      } else {
+        closeDetailPage();
+      }
+    }
+
+    function renderDetailPageBySlug(slug) {
+      const post = state.allPosts.find(p => p.slug === slug);
+      if (!post) {
+        // Try by id fallback
+        const id = parseInt(slug);
+        if (id) {
+          const p2 = state.allPosts.find(p => p.id === id);
+          if (p2) { history.replaceState(null, '', '/recurso/' + id + '/'); renderDetailPageContent(p2); return; }
+        }
+        closeDetailPage();
+        return;
+      }
+      renderDetailPageContent(post);
+    }
+
+function renderDetailPageContent(post) {
+      const main = document.querySelector('.main');
+      if (main) main.style.display = 'none';
+      const header = document.querySelector('.header');
+      if (header) header.style.display = 'none';
+
+      const img = post.featured_image_url || 'https://www.mendoza.edu.ar/wp-content/uploads/2026/04/defecto-sin-destacadas.png';
+      const content = fixContentUrls(post.content_html_clean);
+      const lectura = getLecturaName(post);
+
+      $('detailPage').innerHTML = '<div class="detail-page">' +
+        '<div class="detail-header"><button class="back-btn" onclick="history.back()">← Volver a resultados</button></div>' +
+        '<div class="detail-container">' +
+        '<div class="detail-breadcrumb"><a href="https://test-1.mendoza.edu.ar/" target="_blank" rel="noopener">DGE Mendoza</a> <span>›</span> <a href="https://test-1.mendoza.edu.ar/material/" target="_blank" rel="noopener">Recursos</a> <span>›</span> <span>' + escapeHtml(post.title) + '</span></div>' +
+        '<div class="detail-title-wrap"><h1 class="detail-title">' + escapeHtml(post.title) + '</h1></div>' +
+        '<div class="detail-meta"><span>📅 ' + formatDate(post.date) + '</span>' +
+        (lectura ? '<span class="detail-meta-sep">•</span><span>📁 ' + lectura + '</span>' : '') + '</div>' +
+        '<img class="detail-image" src="' + img + '" alt="' + escapeHtml(post.title) + '">' +
+        '<div class="detail-content">' + content + '</div>' +
+        '<div class="detail-footer">' +
+        (lectura ? '<span class="detail-tag">' + lectura + '</span>' : '') +
+        '</div></div></div>';
+
+      window.scrollTo(0, 0);
+    }
+
+    function renderDetailPage(id) {
+      const post = state.allPosts.find(p => p.id === id);
+      if (!post) { window.location.hash = ''; return; }
+      history.replaceState(null, '', '/' + post.slug + '/');
+      renderDetailPageContent(post);
+    }
+
+    function closeDetailPage() {
+      $('detailPage').innerHTML = '';
+      const main = document.querySelector('.main');
+      if (main) main.style.display = 'grid';
+      const header = document.querySelector('.header');
+      if (header) header.style.display = '';
+    }
+
+    function fixContentUrls(html) {
+      if (!html) return html;
+      let content = html;
+      content = content.replace(/<a[^>]*>📖 Leer<\/a>/gi, '');
+      content = content.replace(/📖 Leer/g, '');
+
+      // Extraer PDFs de shortcodes y iframes
+      const pdfs = [];
+
+      const shortcodeRegex = /\[pdf-embedder\s+url="([^"]+\.pdf)"(?:\s+title="([^"]*)")?\s*\]/gi;
+      let match;
+      while ((match = shortcodeRegex.exec(content)) !== null) {
+        pdfs.push({ url: match[1], title: match[2] || 'Ver PDF' });
+      }
+      content = content.replace(shortcodeRegex, '');
+
+      const iframeRegex = /<iframe[^>]*src="[^"]*(viewer\.html|pdfjs)[^"]*file=([^"&]+)[^"]*"[^>]*><\/iframe>/gi;
+      while ((match = iframeRegex.exec(content)) !== null) {
+        let url = decodeURIComponent(match[2].replace(/&amp;/g, '&'));
+        if (!pdfs.find(p => p.url === url)) pdfs.push({ url, title: 'Ver PDF' });
+      }
+      content = content.replace(iframeRegex, '');
+
+      // Procesar jpe-pdf-embed divs (JPE PDF Embed plugin)
+      const jpePdfRegex = /<div[^>]*class="jpe-pdf-embed"[^>]*data-pdf="([^"]+)"[^>]*>[\s\S]*?<\/div>\s*<a[^>]*>(?:Descargar|Leer)[^<]*<\/a>\s*(?:<p[^>]*><a[^>]*>[^<]*<\/a><\/p>)?/gi;
+      while ((match = jpePdfRegex.exec(content)) !== null) {
+        let url = match[1].replace(/&amp;/g, '&').replace(/&embedded=true/g, '');
+        if (!pdfs.find(p => p.url === url)) pdfs.push({ url, title: 'Ver PDF' });
+      }
+      content = content.replace(jpePdfRegex, '');
+
+      // Renderizar PDFs
+      if (pdfs.length > 0) {
+        let pdfSection = '<div class="pdf-section">';
+        pdfs.forEach((pdf, i) => {
+          pdfSection += '<iframe src="https://docs.google.com/viewer?url=' + encodeURIComponent(pdf.url) + '&embedded=true" style="width:100%;height:450px;border:none;margin:1rem 0;border-radius:8px;" allowfullscreen></iframe>';
+          pdfSection += '<a href="' + pdf.url + '" target="_blank" class="pdf-link">📥 Descargar PDF</a>';
+          if (i < pdfs.length - 1) pdfSection += '<hr>';
+        });
+        pdfSection += '</div>';
+        content += pdfSection;
+      }
+
+      // Corregir URLs de uploads
+      content = content.replace(/src="\/wp-content\/uploads\//g, 'src="https://test-1.mendoza.edu.ar/wp-content/uploads/');
+      content = content.replace(/href="\/wp-content\/uploads\//g, 'href="https://test-1.mendoza.edu.ar/wp-content/uploads/');
+      content = content.replace(/<iframe/g, '<iframe style="width:100%;height:450px;border:none;margin:1rem 0;border-radius:8px;"');
+      return content;
+    }
+
+    // ---- Eventos ----
+    function handleSearch(e) { e.preventDefault(); state.searchQuery = $('searchInput').value.trim(); applyFilters(); }
+    function handleSort(value) { state.sortBy = value; applyFilters(); }
+    function goToPage(page) { state.page = page; renderResults(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+
+    window.addEventListener('popstate', handleRoute);
+    window.addEventListener('DOMContentLoaded', loadData);
+    window.addEventListener('load', handleRoute);
+  </script>
+</body>
+</html><!-- force redeploy 2026-05-12T08:20:44-03:00 -->
